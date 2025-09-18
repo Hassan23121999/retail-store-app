@@ -12,7 +12,7 @@
 
 This retail store application showcases enterprise-grade containerization patterns on AWS. The platform demonstrates a comprehensive e-commerce solution featuring product management, cart functionality, and order processing, implemented using contemporary DevOps methodologies including ArgoCD for continuous deployment and Infrastructure as Code paradigms.
 
-![EKS](docs/images/EKS.gif)
+![EKS](docs/images/eks_architecture.gif)
 
 ## Table of Contents
 
