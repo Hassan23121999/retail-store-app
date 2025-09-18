@@ -24,10 +24,15 @@ resource "helm_release" "argocd" {
   chart      = "argo-cd"
   version    = var.argocd_chart_version
 
-  # ArgoCD configuration values
   values = [
     yamlencode({
-      # Server configuration
+      # New way to enable insecure mode
+      configs = {
+        params = {
+          "server.insecure" = true
+        }
+      }
+
       server = {
         service = {
           type = "ClusterIP"
@@ -35,13 +40,8 @@ resource "helm_release" "argocd" {
         ingress = {
           enabled = false  # We'll use port-forward for access
         }
-        # Enable insecure mode for easier local access
-        extraArgs = [
-          "--insecure"
-        ]
       }
       
-      # Controller configuration
       controller = {
         resources = {
           requests = {
@@ -55,7 +55,6 @@ resource "helm_release" "argocd" {
         }
       }
       
-      # Repo server configuration
       repoServer = {
         resources = {
           requests = {
@@ -69,7 +68,6 @@ resource "helm_release" "argocd" {
         }
       }
       
-      # Redis configuration
       redis = {
         resources = {
           requests = {
@@ -87,6 +85,7 @@ resource "helm_release" "argocd" {
 
   depends_on = [time_sleep.wait_for_cluster]
 }
+
 
 # =============================================================================
 # WAIT FOR ARGOCD TO BE READY
