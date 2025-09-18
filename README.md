@@ -72,7 +72,7 @@ Hassan's implementation embraces cloud-native architectural patterns:
 
 1. **Setup Tools**: Install AWS CLI, Terraform, kubectl, Docker, Helm
 2. **AWS Configuration**: Execute `aws configure` with valid credentials
-3. **Repository Clone**: `git clone https://github.com/LondheShubham153/retail-store-sample-app.git`
+3. **Repository Clone**: `git clone hhttps://github.com/Hassan23121999/retail-store-app.git`
 4. **Infrastructure Provisioning**: Execute Terraform deployment phases
 5. **Platform Access**: Retrieve load balancer endpoint and explore Hassan's retail store
 
@@ -145,7 +145,7 @@ aws configure
 ### Step 2. Retrieve Repository:
 
 ```sh
-git clone https://github.com/LondheShubham153/retail-store-sample-app.git
+git clone https://github.com/Hassan23121999/retail-store-app.git
 ```
 
 ### Step 3. Provision Infrastructure via Terraform:
