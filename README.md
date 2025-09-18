@@ -1,169 +1,126 @@
-# Retail Store Sample App - GitOps with Amazon EKS Auto Mode
- 
-![Banner](./docs/images/banner.png)
+# Hassan's Retail Store Sample Application - Amazon EKS with ArgoCD
  
 <div align="center">
   <div align="center">
 
-[![Stars](https://img.shields.io/github/stars/LondheShubham153/retail-store-sample-app)](Stars)
-![GitHub License](https://img.shields.io/github/license/LondheShubham153/retail-store-sample-app?color=green)
-![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%LondheShubham153%2Fretail-store-sample-app%2Frefs%2Fheads%2Fmain%2F.release-please-manifest.json&query=%24%5B%22.%22%5D&label=release)
-
-
   </div>
 
   <strong>
-  <h2>AWS Containers Retail Sample</h2>
+  <h2>Hassan's AWS Containerized Retail Platform</h2>
   </strong>
 </div>
 
-This is a sample application designed to illustrate various concepts related to containers on AWS. It presents a sample retail store application including a product catalog, shopping cart and checkout, deployed using modern DevOps practices including GitOps and Infrastructure as Code.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Branch Strategy](#branch-strategy)
-- [Getting Started](#getting-started)
-- [GitOps Workflow](#gitops-workflow)
-- [EKS Auto Mode](#eks-auto-mode)
-- [Infrastructure Components](#infrastructure-components)
-- [CI/CD Pipeline](#cicd-pipeline)
-- [Monitoring and Observability](#monitoring-and-observability)
-- [Cleanup](https://github.com/LondheShubham153/retail-store-sample-app/blob/main/README.md#step-12-cleanup)
-- [Troubleshooting](#troubleshooting)
-
-## Overview
-
-The Retail Store Sample App demonstrates a modern microservices architecture deployed on AWS EKS using GitOps principles. The application consists of multiple services that work together to provide a complete retail store experience:
-
-
-- **UI Service**: Java-based frontend
-- **Catalog Service**: Go-based product catalog API
-- **Cart Service**: Java-based shopping cart API
-- **Orders Service**: Java-based order management API
-- **Checkout Service**: Node.js-based checkout orchestration API
-
-
-## Application Architecture
-
-The application has been deliberately over-engineered to generate multiple de-coupled components. These components generally have different infrastructure dependencies, and may support multiple "backends" (example: Carts service supports MongoDB or DynamoDB).
-
-![Architecture](https://github.com/aws-containers/retail-store-sample-app/raw/main/docs/images/architecture.png)
-
-| Component                  | Language | Container Image                                                             | Helm Chart                                                                        | Description                             |
-| -------------------------- | -------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------- |
-| [UI](./src/ui/)            | Java     | [Link](https://gallery.ecr.aws/aws-containers/retail-store-sample-ui)       | [Link](src/ui/chart/values.yaml)    | Store user interface                    |
-| [Catalog](./src/catalog/)  | Go       | [Link](https://gallery.ecr.aws/aws-containers/retail-store-sample-catalog)  | [Link](src/catalog/chart/values.yaml)  | Product catalog API                     |
-| [Cart](./src/cart/)        | Java     | [Link](https://gallery.ecr.aws/aws-containers/retail-store-sample-cart)     | [Link](src/cart/chart/values.yaml)     | User shopping carts API                 |
-| [Orders](./src/orders)     | Java     | [Link](https://gallery.ecr.aws/aws-containers/retail-store-sample-orders)   | [Link](src/orders/chart/values.yaml)   | User orders API                         |
-| [Checkout](./src/checkout) | Node     | [Link](https://gallery.ecr.aws/aws-containers/retail-store-sample-checkout) | [Link](src/checkout/chart/values.yaml) | API to orchestrate the checkout process |
-
-
-## Infrastructure Architecture
-
-The Infrastructure Architecture follows cloud-native best practices:
-
-- **Microservices**: Each component is developed and deployed independently
-- **Containerization**: All services run as containers on Kubernetes
-- **GitOps**: Infrastructure and application deployment managed through Git
-- **Infrastructure as Code**: All AWS resources defined using Terraform
-- **CI/CD**: Automated build and deployment pipelines with GitHub Actions
+This retail store application showcases enterprise-grade containerization patterns on AWS. The platform demonstrates a comprehensive e-commerce solution featuring product management, cart functionality, and order processing, implemented using contemporary DevOps methodologies including ArgoCD for continuous deployment and Infrastructure as Code paradigms.
 
 ![EKS](docs/images/EKS.gif)
 
+## Table of Contents
+
+- [Platform Overview](#platform-overview)
+- [System Architecture](#system-architecture)
+- [Requirements](#requirements)
+- [Rapid Deployment](#rapid-deployment)
+- [Implementation Guide](#implementation-guide)
+- [ArgoCD Setup](#argocd-setup)
+- [EKS Auto Mode Features](#eks-auto-mode-features)
+- [Infrastructure Stack](#infrastructure-stack)
+- [Continuous Integration & Deployment](#continuous-integration--deployment)
+- [Observability & Monitoring](#observability--monitoring)
+- [Resource Cleanup](#resource-cleanup)
+- [Issue Resolution](#issue-resolution)
+
+## Platform Overview
+
+Hassan's Retail Store Application exemplifies a cloud-native microservices ecosystem deployed on AWS EKS. The platform integrates five core microservices delivering a comprehensive e-commerce experience:
+
+![Store](docs/images/Store.gif)
 
 
-## Quick Start
+**Core Microservices:**
 
-**Want to deploy immediately?** Follow these steps for a basic deployment:
+- **UI Service (Java/Spring Boot)**: Frontend web interface providing the customer-facing retail store experience
+- **Catalog Service (Go + MySQL)**: Product catalog management system handling product information and inventory data
+- **Cart Service (Java + DynamoDB)**: Shopping cart management system storing and managing customer cart items
+- **Checkout Service (Node.js + Redis)**: Payment processing orchestrator managing temporary customer data during purchase flow
+- **Orders Service (Java + MySQL)**: Order fulfillment system processing and persisting completed orders
 
-1. **Install Prerequisites**: AWS CLI, Terraform, kubectl, Docker, Helm
-2. **Configure AWS**: `aws configure` with appropriate credentials
-3. **Clone Repository**: `git clone https://github.com/LondheShubham153/retail-store-sample-app.git`
-4. **Deploy Infrastructure**: Run Terraform in two phases (see [Getting Started](#getting-started))
-5. **Access Application**: Get load balancer URL and browse the retail store
+## System Architecture
 
-**Need advanced GitOps workflow?** See [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md) for automated CI/CD setup.
+The platform architecture intentionally employs sophisticated design patterns to showcase distributed system concepts. Each microservice maintains independence with specific infrastructure requirements and supports various backend configurations (for instance: Cart service accommodates both MongoDB and DynamoDB).
 
-## Branch Strategy
+| Microservice Component     | Technology Stack | Container Registry                                                          | Configuration Chart                                                              | Functionality                                      |
+| -------------------------- | ---------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------- |
+| [UI](./src/ui/)            | Java/Spring Boot | [Registry](https://gallery.ecr.aws/aws-containers/retail-store-sample-ui)       | [Configuration](src/ui/chart/values.yaml)    | Frontend web interface for retail store            |
+| [Catalog](./src/catalog/)  | Go + MySQL       | [Registry](https://gallery.ecr.aws/aws-containers/retail-store-sample-catalog)  | [Configuration](src/catalog/chart/values.yaml)  | Product catalog and inventory management           |
+| [Cart](./src/cart/)        | Java + DynamoDB  | [Registry](https://gallery.ecr.aws/aws-containers/retail-store-sample-cart)     | [Configuration](src/cart/chart/values.yaml)     | Shopping cart state management                     |
+| [Checkout](./src/checkout) | Node.js + Redis  | [Registry](https://gallery.ecr.aws/aws-containers/retail-store-sample-checkout) | [Configuration](src/checkout/chart/values.yaml) | Purchase flow orchestration and temporary storage  |
+| [Orders](./src/orders)     | Java + MySQL     | [Registry](https://gallery.ecr.aws/aws-containers/retail-store-sample-orders)   | [Configuration](src/orders/chart/values.yaml)   | Order processing and persistent storage            |
 
-This repository uses a **dual-branch approach** for different deployment scenarios:
+## Technical Infrastructure
 
-### 🌐 **Public Application (Main Branch)**
-- **Purpose**: Simple deployment with public images
-- **Images**: Public ECR (stable versions like v1.2.2)
-- **Deployment**: Manual control with umbrella chart
-- **Updates**: Manual only
-- **Best for**: Demos, learning, quick testing, simple deployments
+Hassan's implementation embraces cloud-native architectural patterns:
 
-### 🏭 **Production (GitOps Branch)**
-- **Purpose**: Full production workflow with CI/CD pipeline
-- **Images**: Private ECR (auto-updated with commit hashes)
-- **Deployment**: Automated via GitHub Actions
-- **Updates**: Automatic on code changes
-- **Best for**: Production environments, automated workflows, enterprise deployments
+- **Distributed Microservices**: Autonomous service development and deployment
+- **Container Orchestration**: Complete containerization on Kubernetes platform
+- **ArgoCD Management**: Git-driven application lifecycle management
+- **Infrastructure as Code**: Terraform-defined AWS resource provisioning
+- **Automated CI/CD**: GitHub Actions-powered build and release automation
 
-> **📚 For detailed branching strategy, CI/CD setup, and advanced workflows, see [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md)**
+## Rapid Deployment
 
-## Getting Started
+**Ready for immediate deployment?** Execute these commands for quick setup:
 
-### Prerequisites
+1. **Setup Tools**: Install AWS CLI, Terraform, kubectl, Docker, Helm
+2. **AWS Configuration**: Execute `aws configure` with valid credentials
+3. **Repository Clone**: `git clone https://github.com/LondheShubham153/retail-store-sample-app.git`
+4. **Infrastructure Provisioning**: Execute Terraform deployment phases
+5. **Platform Access**: Retrieve load balancer endpoint and explore Hassan's retail store
 
-1. **Install Prerequisites**: AWS CLI, Terraform, kubectl, Docker, Helm
-2. **Configure AWS**: `aws configure` with appropriate credentials
-3. **Clone Repository**: `git clone https://github.com/LondheShubham153/retail-store-sample-app.git`
-4. **Deploy Infrastructure**: Run Terraform in two phases (see [Getting Started](#getting-started))
-5. **Access Application**: Get load balancer URL and browse the retail store
+## Requirements
 
-### **Required Tools**
+### **Essential Toolchain**
 
-| Tool          | Version | Installation                                                                         |
+| Component     | Version | Documentation                                                                        |
 | ------------- | ------- | ------------------------------------------------------------------------------------ |
-| **AWS CLI**   | v2+     | [Install Guide](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) |
-| **Terraform** | 1.0+    | [Install Guide](https://developer.hashicorp.com/terraform/install)                   |
-| **kubectl**   | 1.33+   | [Install Guide](https://kubernetes.io/docs/tasks/tools/)                             |
-| **Docker**    | 20.0+   | [Install Guide](https://docs.docker.com/get-docker/)                                 |
-| **Helm**      | 3.0+    | [Install Guide](https://helm.sh/docs/intro/install/)                                 |
-| **Git**       | 2.0+    | [Install Guide](https://git-scm.com/downloads) 
+| **AWS CLI**   | v2+     | [Setup Documentation](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) |
+| **Terraform** | 1.0+    | [Setup Documentation](https://developer.hashicorp.com/terraform/install)                   |
+| **kubectl**   | 1.33+   | [Setup Documentation](https://kubernetes.io/docs/tasks/tools/)                             |
+| **Docker**    | 20.0+   | [Setup Documentation](https://docs.docker.com/get-docker/)                                 |
+| **Helm**      | 3.0+    | [Setup Documentation](https://helm.sh/docs/intro/install/)                                 |
+| **Git**       | 2.0+    | [Setup Documentation](https://git-scm.com/downloads) 
 
-Follow these steps to **install Prerequisites:**
-
-
-### **Quick Installation Scripts**
+### **Automated Installation Process**
 
 <details>
-<summary><strong>🔧 One-Click Installation</strong></summary>
+<summary><strong>🔧 Single-Command Setup</strong></summary>
 
 ```bash
 #!/bin/bash
-# Install all prerequisites
+# Hassan's prerequisite installer
 
-# AWS CLI
+# AWS CLI installation
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
 
-# Terraform
+# Terraform setup
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 sudo apt-get update && sudo apt-get install terraform
 
-# kubectl
+# kubectl installation
 curl -LO "https://dl.k8s.io/release/v1.33.3/bin/linux/amd64/kubectl"
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 
-# Docker
+# Docker setup
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 
-# Helm
+# Helm installation
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-# Verify installations
+# Installation verification
 aws --version
 terraform --version
 kubectl version --client
@@ -173,46 +130,31 @@ helm version
 
 </details>
 
+## Implementation Guide
 
-## Follow these steps to deploy the application:
+Execute these commands to deploy Hassan's retail store:
 
-### Step 1. Configure AWS with **`Root User`** Credentials:
+### Step 1. Setup AWS with **`Root User`** Access:
 
-  Ensure your AWS CLI is configured with the **Root user credentials:**
+Configure your AWS CLI with **Root user permissions:**
 
 ```sh
 aws configure
 ```
 
-### Step 2. Clone the Repository:
+### Step 2. Retrieve Repository:
 
 ```sh
 git clone https://github.com/LondheShubham153/retail-store-sample-app.git
 ```
 
-> [!IMPORTANT]
-> ### Step 3: Choose Your Deployment Strategy
->
-> **For Public Application (Main Branch):**
-> - Uses stable public ECR images (v1.2.2)
-> - Manual deployment control
-> - No GitHub Actions required
-> - Skip to Step 4 - infrastructure is ready
->
-> **For Production (GitOps Branch):**
-> - Uses private ECR with automated CI/CD
-> - Requires GitHub Actions setup
-> - See [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md) for complete setup
+### Step 3. Provision Infrastructure via Terraform:
 
+Hassan's deployment executes in two strategic phases:
 
-### Step 4. Deploy Infrastructure with Terraform:
+#### Phase 1: EKS Cluster Creation
 
-The deployment is split into two phases for better control:
-
-
-### Phase 1 of Terraform: Create EKS Cluster 
-
-In Phase 1: Terraform Initialises and creates resources within the retail_app_eks module. 
+Terraform initializes and provisions the retail_app_eks module resources.
 
 ```sh
 cd retail-store-sample-app/terraform/
@@ -220,207 +162,180 @@ terraform init
 terraform apply -target=module.retail_app_eks -target=module.vpc --auto-approve
 ```
 
-<img width="1205" height="292" alt="image" src="https://github.com/user-attachments/assets/6f1e407e-4a4e-4a4c-9bdf-0c9b89681368" />
+This establishes foundational infrastructure:
+- VPC configuration with public/private subnets
+- Amazon EKS cluster with Auto Mode activated
+- Security groups and IAM configurations
 
+### Step 4. Configure kubectl for EKS Access:
 
-This creates the core infrastructure, including:
-- VPC with public and private subnets
-- Amazon EKS cluster with Auto Mode enabled
-- Security groups and IAM roles
-  
-
-### Step 6: Update kubeconfig to Access the Amazon EKS Cluster:
 ```
 aws eks update-kubeconfig --name retail-store --region <region>
 ```
 
-### Phase 2 of Terraform: Once you update kubeconfig, apply the Remaining Configuration:
-
+#### Phase 2: Complete Infrastructure Deployment
 
 ```bash
 terraform apply --auto-approve
 ```
 
-
-This deploys:
-- ArgoCD for Setup GitOps
+This provisions:
+- ArgoCD for continuous deployment
 - NGINX Ingress Controller
-- Cert Manager for SSL certificates
+- Cert Manager for TLS management
 
-> Application is live with Public image:
+### Step 5. Access Hassan's Application:
 
-- Get your ingress EXTERNAL-IP and paste it in the browser to access retail-store application.
-    ```sh
-    kubectl get svc -n ingress-nginx
-    ```
+Retrieve your ingress EXTERNAL-IP and access it via browser to explore the retail store.
 
-> [!NOTE]
-> Let's move forward with GitOps principle utilising Amazon private registry to create private registry and store images.
-
-### Step 7: GitHub Actions (Production Branch Only)
-
-> **Note**: This step is only required if you're using the **Production branch** for automated deployments. Skip this step if using the **Public Application branch** for simple deployment.
-
-For GitHub Actions, first configure secrets so the pipelines can be automatically triggered:
-
-**Create an IAM User, policies, and generate credentials**
-
-**Go to your GitHub repo → Settings → Secrets and variables → Actions → New repository secret.**
-
-
-| Secret Name           | Value                              |
-|-----------------------|------------------------------------|
-| `AWS_ACCESS_KEY_ID`   | `Your AWS Access Key ID`           |
-| `AWS_SECRET_ACCESS_KEY` | `Your AWS Secret Access Key`     |
-| `AWS_REGION`          | `region-name`                       |
-| `AWS_ACCOUNT_ID`        | `your-account-id` |
-
-
-
-> [!IMPORTANT]
-> Once the entire cluster is created, any changes pushed to the repository will automatically trigger GitHub Actions.
-
-GitHub Actions will automatically build and push the updated Docker images to Amazon ECR.
-
-
-
-<img width="2868" height="1130" alt="image" src="https://github.com/user-attachments/assets/f29c3416-d630-4463-81d2-aaa8af9a02da" />
-
-
-### Verify Deployment
-
-Check if the nodes are running:
-
-```bash
-kubectl get nodes
-```
-
-### Step 8: Access the Application:
-
-The application is exposed through the NGINX Ingress Controller. Get the load balancer URL:
-
-```bash
+```sh
 kubectl get svc -n ingress-nginx
 ```
 
 Use the EXTERNAL-IP of the ingress-nginx-controller service to access the application.
 
-<img width="2912" height="1756" alt="image" src="https://github.com/user-attachments/assets/095077d6-d3cb-48f6-b021-e977db5fb242" />
+## ArgoCD Setup
 
-### Step 9: Argo CD Automated Deployment:
+### Step 6. Verify ArgoCD Installation:
 
-**Verify ArgoCD installation**
+Confirm ArgoCD deployment:
 
 ```
 kubectl get pods -n argocd
 ```
 
+### Step 7. Access ArgoCD Interface:
 
-### Step 10: Port-forward to Argo CD UI and login:
-
-**Get ArgoCD admin password**
+**Retrieve ArgoCD credentials:**
 ```
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
 ```
 
-**Port-forward to Argo CD UI**
+**Establish ArgoCD port-forward:**
 ```
 kubectl port-forward svc/argocd-server -n argocd 8080:443 &
 ```
 
-Open your browser and navigate to:
-https://localhost:8080
+Access via browser: https://localhost:8080
 
-Username: admin 
+Credentials:
+- Username: admin 
+- Password: (retrieved from previous command)
 
-Password: <output of previous command>
+### ArgoCD Dashboard Features
 
-### Step 10: Access ArgoCD UI
+ArgoCD Dashboard provides:
+- **Deployment Status**: Live synchronization status for all microservices
+- **Resource Management**: Comprehensive Kubernetes resource visualization
+- **Sync Controls**: Manual synchronization and rollback functionality
+- **Health Tracking**: Service and resource health indicators
 
-Once ArgoCD is deployed, you can access the web interface:
+## Continuous Integration & Deployment
 
-![ArgoCD UI Dashboard](./docs/images/argocd-ui.png)
+### GitHub Actions Configuration
 
-The ArgoCD UI provides:
-- **Application Status**: Real-time sync status of all services
-- **Resource View**: Detailed view of Kubernetes resources
-- **Sync Operations**: Manual sync and rollback capabilities
-- **Health Monitoring**: Application and resource health status
+Configure GitHub secrets for automated pipeline execution:
 
-### Step 11: Monitor Application Deployment
+**Create IAM User, attach policies, and generate access keys**
+
+Navigate to GitHub repository → Settings → Secrets and variables → Actions → New repository secret.
+
+| Secret Identifier      | Configuration Value                |
+|-----------------------|------------------------------------|
+| `AWS_ACCESS_KEY_ID`   | `Your AWS Access Key`              |
+| `AWS_SECRET_ACCESS_KEY` | `Your AWS Secret Key`            |
+| `AWS_REGION`          | `deployment-region`                 |
+| `AWS_ACCOUNT_ID`      | `your-aws-account-id`              |
+
+Following configuration, repository changes automatically initiate GitHub Actions workflows.
+
+GitHub Actions automatically builds and publishes updated containers to Amazon ECR.
+
+## Observability & Monitoring
+
+### Deployment Verification
+
+Confirm node status:
+
+```bash
+kubectl get nodes
+```
+
+### Application Status Tracking
 
 ```bash
 kubectl get pods -n retail-store
 kubectl get ingress -n retail-store
 ```
 
-### Step 12: Cleanup
+## Resource Cleanup
 
-To delete all resources created by Terraform:
+Remove all Terraform-provisioned resources:
 
-
-**For Phase 1: Run this command**
+### Phase 1 Cleanup:
 
 ```bash
 terraform destroy -target=module.retail_app_eks --auto-approve
 ```
 
-**For Phase 2: Run this command**
+### Phase 2 Cleanup:
+
 ```
 terraform destroy --auto-approve
 ```
 
-<img width="1139" height="439" alt="image" src="https://github.com/user-attachments/assets/5258761a-01c4-49d0-b6f3-997fc10a9f35" />
-
 > [!NOTE]
-> ECR Repositories you need to Delete it from AWS Console Manually.
+> ECR Repositories require manual deletion through AWS Console.
 
+## Issue Resolution
 
+### Common Challenges
 
-## Troubleshooting
-
-### Common Issues
-
-#### **Image Pull Errors**
+#### **Container Pull Failures**
 ```
 Error: Failed to pull image "123456789012.dkr.ecr.us-west-2.amazonaws.com/retail-store-ui:abc1234"
 ```
-**Solutions**:
-1. Ensure you're using the correct branch for your deployment strategy
-2. For Production branch: Check GitHub Actions completed successfully
-3. For Public Application branch: Verify you're using public ECR images
-4. Check AWS credentials and ECR permissions
+**Resolution Steps**:
+1. Verify AWS credentials and ECR access permissions
+2. Confirm GitHub Actions completion for image builds
+3. Check ECR repository exists and contains images
+4. Validate IAM roles have appropriate permissions
 
-#### **GitHub Actions Not Triggering**
-**Solutions**:
-1. Ensure changes are in `src/` directory
-2. Verify you're on the `production` branch (gitops)
-3. Check GitHub Actions is enabled in repository settings
-4. Review [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md) for detailed setup
+#### **GitHub Actions Trigger Issues**
+**Resolution Steps**:
+1. Confirm modifications in `src/` directory
+2. Verify GitHub Actions activation in repository settings
+3. Check configured secrets are correct
+4. Review workflow logs for specific errors
 
-### Getting Help
+#### **ArgoCD Sync Problems**
+**Resolution Steps**:
+1. Verify ArgoCD has access to Git repository
+2. Check application manifests are valid
+3. Ensure cluster has sufficient resources
+4. Review ArgoCD application logs for errors
 
-- **Basic deployment issues**: Check this README
-- **Advanced GitOps issues**: See [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md)
-- **Infrastructure issues**: Review Terraform logs
-- **Application issues**: Check ArgoCD UI and kubectl logs
+### Support Resources
 
-## License
+- **Deployment challenges**: Reference this documentation
+- **Infrastructure concerns**: Analyze Terraform outputs
+- **Application problems**: Inspect ArgoCD dashboard and kubectl logs
+- **Container issues**: Check ECR and pod logs
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](./LICENSE) file for details.
+## Licensing
 
-## Support
+This project operates under Apache License 2.0 - review [LICENSE](./LICENSE) for complete terms.
 
-- **Issues**: [GitHub Issues](https://github.com/LondheShubham153/retail-store-sample-app/issues)
-- **Discord**: [TrainWithShubhamCommunity](https://discord.gg/kGEr9mR5gT)
+## Community Support
+
+- **Issue Tracking**: [GitHub Issues](https://github.com/Hassan23121999/retail-store-app/issues)
 
 ---
 
 <div align="center">
 
-**⭐ Star this repository if you found it helpful!**
+**⭐ Star Hassan's repository if you found it valuable!**
 
-**🔄 For advanced GitOps workflows, see [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md)**
+**📧 For questions and support, open an issue on GitHub**
 
 </div>
-
